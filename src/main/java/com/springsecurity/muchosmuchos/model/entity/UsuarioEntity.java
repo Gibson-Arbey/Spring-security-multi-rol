@@ -1,4 +1,4 @@
-package com.springsecurity.muchosmuchos.entity;
+package com.springsecurity.muchosmuchos.model.entity;
 
 import java.util.Set;
 

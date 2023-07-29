@@ -1,5 +1,7 @@
 package com.springsecurity.muchosmuchos.services.implementations;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,8 +11,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.springsecurity.muchosmuchos.entity.UsuarioEntity;
+import com.springsecurity.muchosmuchos.exception.EmailExistsException;
+import com.springsecurity.muchosmuchos.model.entity.RolEntity;
+import com.springsecurity.muchosmuchos.model.entity.UsuarioEntity;
+import com.springsecurity.muchosmuchos.repository.RolRepository;
 import com.springsecurity.muchosmuchos.repository.UsuarioRepository;
 import com.springsecurity.muchosmuchos.services.interfaces.UsuarioInterface;
 
@@ -20,6 +26,9 @@ public class UsuarioService implements UsuarioInterface{
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private RolRepository rolRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UsuarioEntity userEntity = usuarioRepository.findByEmail(username)
@@ -27,7 +36,7 @@ public class UsuarioService implements UsuarioInterface{
 
         Set<String> roles = userEntity.getRoles()
                 .stream()
-                .map(role -> "ROLE_" + role.getName()) // Asegúrate de que role.getName() devuelva el nombre del rol como texto
+                .map(role -> role.getNombre()) // Asegúrate de que role.getName() devuelva el nombre del rol como texto
                 .collect(Collectors.toSet());
 
         Set<SimpleGrantedAuthority> authorities = roles.stream()
@@ -37,6 +46,24 @@ public class UsuarioService implements UsuarioInterface{
         return new User(userEntity.getEmail(),
                 userEntity.getContrasenia(),
                 authorities);
+    }
+
+    @Override
+    @Transactional
+    public void guardarUsuario(UsuarioEntity usuarioEntity, List<String> rolesNombres) {
+        if (usuarioRepository.findByEmail(usuarioEntity.getEmail()).isPresent()) {
+            throw new EmailExistsException("El correo electrónico ya existe");
+        }
+
+        Set<RolEntity> roles = new HashSet<>();
+        for (String rolNombre : rolesNombres) {
+            RolEntity rolEntity = rolRepository.findByNombre(rolNombre).orElseThrow(
+                () -> new RuntimeException("El rol '" + rolNombre + "' no existe.")
+            );
+            roles.add(rolEntity);
+        }
+        usuarioEntity.setRoles(roles);
+        usuarioRepository.save(usuarioEntity);
     }
     
 }

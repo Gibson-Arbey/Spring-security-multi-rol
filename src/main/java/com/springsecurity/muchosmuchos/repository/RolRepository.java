@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.springsecurity.muchosmuchos.model.entity.UsuarioEntity;
+import com.springsecurity.muchosmuchos.model.entity.RolEntity;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
+public interface RolRepository extends JpaRepository<RolEntity, Long>{
     
-    Optional<UsuarioEntity> findByEmail(String email);
+    Optional<RolEntity> findByNombre(String nombre);
 }

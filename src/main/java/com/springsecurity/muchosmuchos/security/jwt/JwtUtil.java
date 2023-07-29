@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Set;
 import java.util.function.Function;
 
 @Component
@@ -24,10 +25,11 @@ public class JwtUtil {
     private String timeExpiration;
 
 
-    // Generar token de acceso
-    public String generateAccesToken(String username){
+    // Generar token de acceso con roles
+    public String generateAccessToken(String username, Set<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("roles", roles) // Agrega los roles como un claim
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(timeExpiration)))
                 .signWith(getSignatureKey(), SignatureAlgorithm.HS256)

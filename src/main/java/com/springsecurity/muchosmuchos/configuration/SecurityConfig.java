@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.springsecurity.muchosmuchos.security.filter.JwtAuthenticationFilter;
 import com.springsecurity.muchosmuchos.security.filter.JwtAuthorizationFilter;
@@ -23,6 +24,7 @@ import com.springsecurity.muchosmuchos.services.implementations.UsuarioService;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableTransactionManagement
 @RequiredArgsConstructor
 public class SecurityConfig {
     
@@ -51,7 +53,7 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(config -> config.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/hello").permitAll();
+                    auth.requestMatchers("/usuario/guardarUsuario").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {
@@ -65,6 +67,7 @@ public class SecurityConfig {
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder)
             throws Exception {
+                
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(usuarioService)
                 .passwordEncoder(passwordEncoder)
