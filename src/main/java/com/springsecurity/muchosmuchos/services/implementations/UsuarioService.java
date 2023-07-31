@@ -36,7 +36,7 @@ public class UsuarioService implements UsuarioInterface{
 
         Set<String> roles = userEntity.getRoles()
                 .stream()
-                .map(role -> role.getNombre()) // Asegúrate de que role.getName() devuelva el nombre del rol como texto
+                .map(role -> role.getNombre()) 
                 .collect(Collectors.toSet());
 
         Set<SimpleGrantedAuthority> authorities = roles.stream()

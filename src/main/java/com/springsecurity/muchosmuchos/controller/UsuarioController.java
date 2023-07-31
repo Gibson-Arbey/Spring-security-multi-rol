@@ -22,7 +22,7 @@ import com.springsecurity.muchosmuchos.services.implementations.UsuarioService;
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
-    
+
     @Autowired
     UsuarioService usuarioService;
 
@@ -47,10 +47,10 @@ public class UsuarioController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROL_ADMIN', 'ROL_AUXILIAR')")
+    @PreAuthorize("hasAnyAuthority('ROL_ADMIN', 'ROL_AUXILIAR')")
     @GetMapping("/prueba")
-    public String prueba(){
-        return "Estas autorizado";
+    public String prueba() {
+        return "Estás autorizado";
     }
-}
 
+}
